@@ -49,29 +49,94 @@ def query_llama3(user_query):
 
 # ✅ Streamlit Page Configuration
 
-# ✅ Section: Upload Knowledge Base File
-st.set_page_config(page_title="Chatbot", page_icon="🤖", layout="wide")
-st.title("🤖Math assistant")
+# ✅ Set Page Config
+st.set_page_config(page_title="Math Assistant", page_icon="🤖", layout="wide")
 
-# ✅ Initialize Chat History in Streamlit
+# ✅ Apply Dark Theme Styling
+st.markdown("""
+<style>
+/* Set Dark Background */
+body {
+    background-color: #121212;
+    color: #E0E0E0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Chat Container */
+.chat-container {
+    margin: 20px;
+}
+
+/* Common Chat Bubble Style */
+.chat-bubble {
+    padding: 12px 18px;
+    border-radius: 15px;
+    margin-bottom: 10px;
+    max-width: 75%;
+    line-height: 1.5;
+    font-size: 16px;
+}
+
+/* User Message Styling */
+.user-bubble {
+    background-color: #1E88E5;
+    color: white;
+    margin-left: auto;
+    text-align: right;
+    border-top-right-radius: 0px;
+}
+
+/* Assistant Message Styling */
+.assistant-bubble {
+    background-color: #333333;
+    color: #E0E0E0;
+    margin-right: auto;
+    text-align: left;
+    border-top-left-radius: 0px;
+}
+
+/* Center the Title */
+.title-container {
+    text-align: center;
+    font-size: 64px;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+/* Input Box Customization */
+.stChatInput {
+    background-color: #333333 !important;
+    color: white !important;
+    border: 1px solid #555555 !important;
+}
+</style>
+""", unsafe_allow_html=True)
+
+# ✅ Title Section
+st.markdown("<div class='title-container'>🤖 <b>Math Assistant</b></div>", unsafe_allow_html=True)
+
+# ✅ Initialize Chat History
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
 # ✅ Display Chat History
 for msg in st.session_state.messages:
-    st.chat_message(msg["role"]).write(msg["content"])
+    if msg["role"] == "user":
+        st.markdown(f"<div class='chat-bubble user-bubble'><strong>You:</strong> {msg['content']}</div>", unsafe_allow_html=True)
+    else:
+        st.markdown(f"<div class='chat-bubble assistant-bubble'><strong>Assistant:</strong> {msg['content']}</div>", unsafe_allow_html=True)
 
 # ✅ User Input Section
 user_input = st.chat_input("Type your message...")
 
 if user_input:
-    # Append user message to chat history
+    # Append user message
     st.session_state.messages.append({"role": "user", "content": user_input})
-    st.chat_message("user").write(user_input)
+    st.markdown(f"<div class='chat-bubble user-bubble'><strong>You:</strong> {user_input}</div>", unsafe_allow_html=True)
 
     # Get AI Response
     ai_response = query_llama3(user_input)
 
-    # Append AI message to chat history
+    # Append AI response
     st.session_state.messages.append({"role": "assistant", "content": ai_response})
-    st.chat_message("assistant").write(ai_response)
+    st.markdown(f"<div class='chat-bubble assistant-bubble'><strong>Assistant:</strong> {ai_response}</div>", unsafe_allow_html=True)
